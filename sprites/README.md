@@ -29,3 +29,19 @@ import "github.com/dswisher/gamekit/sprites"
 ## License
 
 MIT
+
+## Inspiration
+
+- [ganim8-lib](https://github.com/yottahmd/ganim8-lib) - Sprite animation library for Ebitengine inspired by anim8
+- [anim](https://github.com/setanarut/anim) - Animation player for Ebitengine v2
+- [go-spritesheet](https://github.com/Kangaroux/go-spritesheet) - Use YAML to make working with sprite sheets easy. Compatible with ebiten
+
+## Editors
+
+An incomplete list of editing tools, none of which I have used, so these are not recommendations.
+
+- [LibreSprite](https://github.com/LibreSprite/LibreSprite) - fork of [AseSprite](https://www.aseprite.org/) circa 2016
+- [Pixelorama](https://github.com/Orama-Interactive/Pixelorama) - built on Godot
+- [mtPaint](https://github.com/wjaguar/mtPaint) - Mark Tyler's Painting Program - old, but still active
+- [GrafX2](https://pulkomandy.tk/projects/GrafX2) - [gitlab](https://gitlab.com/GrafX2/grafX2) - The ultimate 256 color painting program - even older, but still active
+
