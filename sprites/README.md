@@ -32,9 +32,10 @@ MIT
 
 ## Inspiration
 
-- [ganim8-lib](https://github.com/yottahmd/ganim8-lib) - Sprite animation library for Ebitengine inspired by anim8
-- [anim](https://github.com/setanarut/anim) - Animation player for Ebitengine v2
-- [go-spritesheet](https://github.com/Kangaroux/go-spritesheet) - Use YAML to make working with sprite sheets easy. Compatible with ebiten
+- [yottahmd/ganim8-lib](https://github.com/yottahmd/ganim8-lib) - Sprite animation library for Ebitengine inspired by anim8
+- [fzipp/texturepacker](https://github.com/fzipp/texturepacker) - Read sprite sheets created and exported as JSON by TexturePacker.
+- [setanarut/anim](https://github.com/setanarut/anim) - Animation player for Ebitengine v2
+- [Kangaroux/go-spritesheet](https://github.com/Kangaroux/go-spritesheet) - Use YAML to make working with sprite sheets easy. Compatible with ebiten
 
 ## Editors
 

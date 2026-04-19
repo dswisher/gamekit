@@ -1,15 +1,15 @@
 package main
 
 import (
-	"bytes"
 	"embed"
-	"image"
-	_ "image/png"
 	"log"
 
 	"github.com/dswisher/gamekit/sprites"
 	"github.com/hajimehoshi/ebiten/v2"
 )
+
+//go:embed assets/*
+var assets embed.FS
 
 const (
 	screenWidth  = 800
@@ -34,7 +34,7 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Clear()
 
-	g.turret.Draw(screen, sprites.DrawOpts(100, 400))
+	g.turret.Draw(screen, sprites.DrawOpts(100, 300))
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -42,27 +42,11 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func (g *Game) loadAssets() {
-	img := ebiten.NewImageFromImage(readImage("assets/turret-03.png"))
-	g.turret = sprites.NewSprite(img)
-}
-
-//go:embed assets/*
-var assets embed.FS
-
-func readImage(file string) image.Image {
-	b, err := assets.ReadFile(file)
+	img, err := sprites.LoadImageFromFS(assets, "assets/turret-03.png")
 	if err != nil {
-		log.Fatal("Failed to read file: ", err)
+		log.Fatal(err)
 	}
-	return bytes2Image(b)
-}
-
-func bytes2Image(rawImage []byte) image.Image {
-	img, format, error := image.Decode(bytes.NewReader(rawImage))
-	if error != nil {
-		log.Fatal("Bytes2Image Failed: ", format, error)
-	}
-	return img
+	g.turret = sprites.NewSprite(img)
 }
 
 func main() {

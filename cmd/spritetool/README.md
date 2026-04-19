@@ -32,6 +32,10 @@ spritetool sheet2.yaml
 
 TBD
 
+## Similar Tools
+
+- [Free Sprite Sheet Packer](https://www.codeandweb.com/free-sprite-sheet-packer) - online, free tool
+
 ## License
 
 MIT
