@@ -1,0 +1,15 @@
+
+# Go workspace checksum file (auto-generated)
+go.work.sum
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+

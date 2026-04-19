@@ -54,11 +54,11 @@ func readImage(file string) image.Image {
 	if err != nil {
 		log.Fatal("Failed to read file: ", err)
 	}
-	return bytes2Image(&b)
+	return bytes2Image(b)
 }
 
-func bytes2Image(rawImage *[]byte) image.Image {
-	img, format, error := image.Decode(bytes.NewReader(*rawImage))
+func bytes2Image(rawImage []byte) image.Image {
+	img, format, error := image.Decode(bytes.NewReader(rawImage))
 	if error != nil {
 		log.Fatal("Bytes2Image Failed: ", format, error)
 	}
