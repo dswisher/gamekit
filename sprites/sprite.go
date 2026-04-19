@@ -10,14 +10,13 @@ type Sprite struct {
 }
 
 // Create a simple sprite from the specified image
-// TODO: I don't like this name, as it isn't clear what is being created
-func FromImage(img *ebiten.Image) *Sprite {
+func NewSprite(img *ebiten.Image) *Sprite {
 	return &Sprite{image: img}
 }
 
 // Draw the sprite with the specified options
 func (spr *Sprite) Draw(screen *ebiten.Image, opts *DrawOptions) {
-	// TODO
+	// TODO: properly handle the draw options
 	// subImage := spr.subImages[index]
 	// screen.DrawImage(subImage, op)
 

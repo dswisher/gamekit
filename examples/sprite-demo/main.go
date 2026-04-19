@@ -43,7 +43,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 func (g *Game) loadAssets() {
 	img := ebiten.NewImageFromImage(readImage("assets/turret-03.png"))
-	g.turret = sprites.FromImage(img)
+	g.turret = sprites.NewSprite(img)
 }
 
 //go:embed assets/*
