@@ -7,7 +7,7 @@ A collection of modular packages for building games with Go and Ebitengine.
 | Package | Docs | Latest |
 |---------|------|--------|
 | [sprites](./sprites/) - Sprite sheet management and animation for Ebitengine | [![Go Reference](https://pkg.go.dev/badge/github.com/dswisher/gamekit/sprites.svg)](https://pkg.go.dev/github.com/dswisher/gamekit/sprites) | ![Version](https://img.shields.io/github/v/tag/dswisher/gamekit?filter=sprites/*&label=)
-- [spritetool](./cmd/spritetool/) - CLI tool for building sprite sheets
+| [spritetool](./cmd/spritetool/) - CLI tool for building sprite sheets | - | - |
 
 ## Examples
 

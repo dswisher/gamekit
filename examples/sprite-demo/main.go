@@ -17,7 +17,8 @@ const (
 )
 
 type Game struct {
-	turret *sprites.Sprite
+	turret   *sprites.Sprite
+	runRight *sprites.Sprite
 }
 
 func NewGame() *Game {
@@ -34,7 +35,8 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Clear()
 
-	g.turret.Draw(screen, sprites.DrawOpts(100, 300))
+	g.turret.Draw(screen, sprites.DrawOpts(50, 50))
+	g.runRight.Draw(screen, sprites.DrawOpts(300, 50))
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -42,11 +44,20 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func (g *Game) loadAssets() {
+	// Load a simple standalone sprite
 	img, err := sprites.LoadImageFromFS(assets, "assets/turret-03.png")
 	if err != nil {
 		log.Fatal(err)
 	}
 	g.turret = sprites.NewSprite(img)
+
+	// Load a sprite sheet and use JSON metadata to create a sprite from it
+	// TODO
+	img, err = sprites.LoadImageFromFS(assets, "assets/texture-packer.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+	g.runRight = sprites.NewSprite(img)
 }
 
 func main() {

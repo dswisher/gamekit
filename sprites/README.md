@@ -1,6 +1,6 @@
 # Sprites
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/dswisher/gamekit/sprites.svg)](https://pkg.go.dev/github.com/dswisher/gamekit/sprites)
+[![Go Reference](https://pkg.go.dev/badge/github.com/dswisher/gamekit/sprites.svg)](https://pkg.go.dev/github.com/dswisher/gamekit/sprites) ![Version](https://img.shields.io/github/v/tag/dswisher/gamekit?filter=sprites/*&label=)
 
 Sprite sheet management and animation library for Ebitengine.
 
