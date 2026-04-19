@@ -1,5 +1,7 @@
 # Sprites
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/dswisher/gamekit/sprites.svg)](https://pkg.go.dev/github.com/dswisher/gamekit/sprites)
+
 Sprite sheet management and animation library for Ebitengine.
 
 ## Installation
