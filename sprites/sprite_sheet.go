@@ -16,25 +16,25 @@ import (
 // Individual sprites can be extracted using the Sprite method with the
 // appropriate rectangle coordinates.
 //
-// Planned features:
-//   - Grid-based layout support for automatic sprite extraction
-//   - JSON metadata loading for complex sprite sheets
-//   - Animation sequence support
+// Example usage:
 //
-// Example usage (planned):
-//
-//	sheet := sprites.NewSheet(playerImg, gridLayout)
-//	sprite := sheet.Sprite(gridLayout.Cell(0, 0))
+//	sheet := sprites.NewSheet(playerImg)
+//	locator := sprites.NewGridLocator(32, 32)
+//	sprite := sheet.Sprite(locator.GetRect(0, 0))
 type SpriteSheet struct {
 	image *ebiten.Image
 }
 
-// TODO: add:
-//    sprites.NewSheet(img *ebiten.Image, layout Layout)
-//       -> sheet := sprites.NewSheet(playerImg, gridLayout)
+// NewSheet creates a new SpriteSheet from the specified ebiten.Image.
+// The image can be loaded using LoadImageFromFS or created directly.
 //
-//    sprites.LoadSheetFromMeta(metaPath string)
-//       -> sheet := sprites.LoadSheetFromMeta("assets/player.json")
+// Example:
+//
+//	img, _ := sprites.LoadImageFromFS(assets, "player.png")
+//	sheet := sprites.NewSheet(img)
+func NewSheet(img *ebiten.Image) *SpriteSheet {
+	return &SpriteSheet{image: img}
+}
 
 // Sprite extracts a single sprite from the sprite sheet using the specified
 // rectangle coordinates. The rectangle defines the portion of the sprite sheet
@@ -43,14 +43,20 @@ type SpriteSheet struct {
 // The r parameter should be an image.Rectangle with Min and Max points defining
 // the top-left and bottom-right corners of the sprite within the sheet.
 //
+// The rectangle would typically be specified using a Locator, rather than being
+// created directly.
+//
 // Example:
 //
-//	// Extract a 32x32 sprite at position (64, 0)
+//	// Extract a 32x32 sprite at position (64, 0), two different ways
 //	r := image.Rect(64, 0, 96, 32)
 //	sprite := sheet.Sprite(r)
 //
+//	locator := sprites.NewGridLocator(32, 32)
+//	sprite = sheet.Sprite(locator.GetRect(1, 0))
+//
 // Returns nil if the extraction fails or the rectangle is invalid.
 func (s *SpriteSheet) Sprite(r image.Rectangle) *Sprite {
-	// TODO: implement sprite extraction from the sprite sheet
-	return nil
+	subImg := s.image.SubImage(r).(*ebiten.Image)
+	return NewSprite(subImg)
 }

@@ -11,6 +11,8 @@
 //	opts := sprites.DrawOpts(100, 100)
 //	sprite.Draw(screen, opts)
 //
+// TODO: add info on using sprite sheets
+//
 // For loading images from embedded filesystems:
 //
 //	//go:embed assets/*.png

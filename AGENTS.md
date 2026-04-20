@@ -4,6 +4,7 @@
 
 Agents should never commit changes to git or push changes.
 
+Agents should only make code changes after asking permission to do so.
 
 ## Coding Conventions
 

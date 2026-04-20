@@ -17,8 +17,9 @@ const (
 )
 
 type Game struct {
-	turret   *sprites.Sprite
-	runRight *sprites.Sprite
+	turret       *sprites.Sprite
+	runRightGrid *sprites.Sprite
+	runRightMeta *sprites.Sprite
 }
 
 func NewGame() *Game {
@@ -36,7 +37,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Clear()
 
 	g.turret.Draw(screen, sprites.DrawOpts(50, 50))
-	g.runRight.Draw(screen, sprites.DrawOpts(300, 50))
+	g.runRightGrid.Draw(screen, sprites.DrawOpts(300, 50))
+	g.runRightMeta.Draw(screen, sprites.DrawOpts(500, 50))
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -51,13 +53,25 @@ func (g *Game) loadAssets() {
 	}
 	g.turret = sprites.NewSprite(img)
 
-	// Load a sprite sheet and use JSON metadata to create a sprite from it
+	// Load the sprite sheet image
+	img, err = sprites.LoadImageFromFS(assets, "assets/texture-packer.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sheet := sprites.NewSheet(img)
+
+	// Set up a grid locator and use it to extract a sprite from the sheet
+	grid := sprites.NewGridLocator(128, 128, sprites.WithBorder(1))
+	g.runRightGrid = sheet.Sprite(grid.GetRect(1, 0))
+
+	// Load the metadata for the sprite sheet and use it to extract a sprite from the sheet
 	// TODO
 	img, err = sprites.LoadImageFromFS(assets, "assets/texture-packer.png")
 	if err != nil {
 		log.Fatal(err)
 	}
-	g.runRight = sprites.NewSprite(img)
+	g.runRightMeta = sprites.NewSprite(img)
 }
 
 func main() {

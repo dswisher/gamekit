@@ -84,7 +84,7 @@
 	"meta": {
 		"app": "http://www.codeandweb.com/texturepacker",
 		"version": "1.0",
-		"image": "free-sprite-sheet-packer.png",
+		"image": "texture-packer.png",
 		"format": "RGBA8888",
 		"size": {
 			"w": 260,
