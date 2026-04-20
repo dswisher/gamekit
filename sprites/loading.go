@@ -60,3 +60,58 @@ func LoadImageFromFS(fsys fs.FS, path string) (*ebiten.Image, error) {
 
 	return ebiten.NewImageFromImage(img), nil
 }
+
+// LoadMetadataFromFS loads sprite sheet metadata from a JSON file.
+//
+// The format parameter specifies the JSON format:
+//   - "texture-packer-hash": Hash format where frames is an object
+//   - "texture-packer-array": Array format where frames is an array
+//   - "": Empty string enables auto-detection (default)
+//
+// Parameters:
+//   - fsys:   The filesystem to load from (must implement fs.FS)
+//   - path:   The path to the JSON file within the filesystem
+//   - format: The format identifier, or "" for auto-detection
+//
+// Returns:
+//   - *MetadataLocator: The loaded metadata locator
+//   - error: An error if the file cannot be read, parsed, or format is unsupported
+//
+// Example:
+//
+//	locator, err := sprites.LoadMetadataFromFS(assets, "sprites.json", "")
+//	if err != nil {
+//	    log.Fatal(err)
+//	}
+//	rect := locator.GetRect("player_run_01")
+func LoadMetadataFromFS(fsys fs.FS, path, format string) (*MetadataLocator, error) {
+	data, err := fs.ReadFile(fsys, path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read metadata file %s: %w", path, err)
+	}
+
+	// Auto-detect format if not specified
+	if format == "" {
+		detectedFormat, detectErr := detectFormat(data)
+		if detectErr != nil {
+			return nil, fmt.Errorf("failed to detect format for %s: %w", path, detectErr)
+		}
+		format = detectedFormat
+	}
+
+	var sheet *sheetMetadata
+	switch format {
+	case "texture-packer-hash":
+		sheet, err = loadHashFormat(data)
+	case "texture-packer-array":
+		sheet, err = loadArrayFormat(data)
+	default:
+		return nil, fmt.Errorf("unsupported metadata format: %s", format)
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse metadata file %s: %w", path, err)
+	}
+
+	return &MetadataLocator{sheet: sheet}, nil
+}
