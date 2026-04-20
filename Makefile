@@ -9,7 +9,7 @@ PUBLIC_MODULES := ./sprites
 # Default port for documentation server
 DOC_PORT ?= 8080
 
-.PHONY: lint docs docs-check docs-server
+.PHONY: lint test docs docs-check docs-server
 
 lint:
 	@for module in $(MODULES); do \
@@ -21,6 +21,15 @@ lint:
 		echo "Running staticcheck on $$module..."; \
 		(cd $$module && staticcheck ./...) || exit 1; \
 	done
+
+# Run tests for all public modules
+test:
+	@echo "Running tests for public modules: $(PUBLIC_MODULES)"
+	@for module in $(PUBLIC_MODULES); do \
+		echo "Testing $$module..."; \
+		(cd $$module && go test -v ./...) || exit 1; \
+	done
+	@echo "All tests passed."
 
 # Check that all public symbols have documentation comments
 docs-check:

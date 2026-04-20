@@ -42,6 +42,8 @@ func NewGridLocator(spriteWidth, spriteHeight int, opts ...GridLocatorOption) *G
 	return gl
 }
 
+// WithBorder sets the border size between sprites in pixels.
+// The border is the spacing between adjacent sprites in the grid.
 func WithBorder(border int) GridLocatorOption {
 	return func(gl *GridLocator) {
 		gl.border = border
@@ -65,7 +67,11 @@ func WithSheetSizeGrid(cols, rows int) GridLocatorOption {
 }
 
 // GetRect returns the image rectangle for the sprite at the specified grid coordinates.
+//
 // Panics if the coordinates are out of bounds when sheet dimensions have been configured.
+// This behavior is optional, and it panics rather than returning error semantics to keep
+// the calls clean. It is assumed all sprites will be loaded when game/scene starts,
+// so if there is an issue, it will show itself early in development.
 func (gl *GridLocator) GetRect(col, row int) image.Rectangle {
 	// Validate bounds if sheet dimensions are configured
 	if gl.sheetWidth > 0 && gl.sheetHeight > 0 {

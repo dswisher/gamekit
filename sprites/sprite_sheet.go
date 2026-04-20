@@ -54,8 +54,6 @@ func NewSheet(img *ebiten.Image) *SpriteSheet {
 //
 //	locator := sprites.NewGridLocator(32, 32)
 //	sprite = sheet.Sprite(locator.GetRect(1, 0))
-//
-// Returns nil if the extraction fails or the rectangle is invalid.
 func (s *SpriteSheet) Sprite(r image.Rectangle) *Sprite {
 	subImg := s.image.SubImage(r).(*ebiten.Image)
 	return NewSprite(subImg)
