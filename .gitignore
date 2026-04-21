@@ -13,6 +13,3 @@ go.work.sum
 .DS_Store
 Thumbs.db
 
-# Saved chats
-chats/
-
