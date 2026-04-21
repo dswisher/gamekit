@@ -18,6 +18,19 @@ type GridLocatorOption func(*GridLocator)
 
 // NewGridLocator creates a new GridLocator with the specified sprite size
 // and optional border settings.
+//
+// Example — simple sheet with no border:
+//
+//	grid := sprites.NewGridLocator(32, 32)
+//	sprite := sheet.Sprite(grid.GetRect(0, 0))
+//
+// Example — sheet with a 1-pixel border between sprites, bounded to 4×2 grid:
+//
+//	grid := sprites.NewGridLocator(128, 128,
+//	    sprites.WithBorder(1),
+//	    sprites.WithSheetSizeGrid(4, 2),
+//	)
+//	sprite := sheet.Sprite(grid.GetRect(1, 0))
 func NewGridLocator(spriteWidth, spriteHeight int, opts ...GridLocatorOption) *GridLocator {
 	// Initialize with defaults
 	gl := &GridLocator{
@@ -50,7 +63,13 @@ func WithBorder(border int) GridLocatorOption {
 	}
 }
 
-// WithSheetSizePixels sets the sprite sheet dimensions in pixels
+// WithSheetSizePixels sets the sprite sheet dimensions in pixels, enabling
+// bounds checking in GetRect. Use this when you know the pixel dimensions of
+// the sprite sheet image directly (e.g. from the image metadata).
+//
+// Example:
+//
+//	grid := sprites.NewGridLocator(32, 32, sprites.WithSheetSizePixels(256, 128))
 func WithSheetSizePixels(width, height int) GridLocatorOption {
 	return func(gl *GridLocator) {
 		gl.sheetWidth = width
@@ -58,7 +77,13 @@ func WithSheetSizePixels(width, height int) GridLocatorOption {
 	}
 }
 
-// WithSheetSizeGrid sets the sprite sheet dimensions in grid coordinates
+// WithSheetSizeGrid sets the sprite sheet dimensions in grid coordinates,
+// enabling bounds checking in GetRect. Use this when you know the number of
+// columns and rows rather than the pixel dimensions.
+//
+// Example:
+//
+//	grid := sprites.NewGridLocator(32, 32, sprites.WithSheetSizeGrid(8, 4))
 func WithSheetSizeGrid(cols, rows int) GridLocatorOption {
 	return func(gl *GridLocator) {
 		gl.sheetCols = cols

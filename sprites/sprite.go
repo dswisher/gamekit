@@ -1,23 +1,3 @@
-// Package sprites provides sprite sheet management and animation for Ebitengine.
-//
-// The sprites package offers tools for loading, managing, and rendering sprite
-// sheets and individual sprites. It supports loading images from various sources
-// including the filesystem and embedded assets, and provides flexible drawing
-// options for positioning and transforming sprites.
-//
-// Basic usage:
-//
-//	sprite := sprites.NewSprite(img)
-//	opts := sprites.DrawOpts(100, 100)
-//	sprite.Draw(screen, opts)
-//
-// TODO: add info on using sprite sheets
-//
-// For loading images from embedded filesystems:
-//
-//	//go:embed assets/*.png
-//	var assets embed.FS
-//	img, err := sprites.LoadImageFromFS(assets, "assets/player.png")
 package sprites
 
 import (
