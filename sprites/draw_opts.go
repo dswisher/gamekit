@@ -116,3 +116,33 @@ func (opts DrawOptions) WithBlend(blend ebiten.Blend) DrawOptions {
 	opts.Blend = blend
 	return opts
 }
+
+// WithColorM returns a new DrawOptions with the specified color matrix.
+// The color matrix transforms the sprite's colors when drawn, enabling effects
+// like tinting, brightness adjustment, grayscale, and more.
+//
+// Use colorm.ColorM's methods to build transformations:
+//   - Scale(r, g, b, a): Scale each color channel (1.0 = unchanged)
+//   - Translate(r, g, b, a): Add to each color channel
+//   - ChangeHSV(hue, saturation, value): HSV adjustments
+//
+// Example:
+//
+//	// Tint sprite red (keep red, remove green and blue)
+//	cm := colorm.ColorM{}
+//	cm.Scale(1.0, 0.0, 0.0, 1.0)
+//	sprite.Draw(screen, sprites.DrawAt(100, 100).WithColorM(cm))
+//
+//	// Make sprite 50% darker
+//	cm := colorm.ColorM{}
+//	cm.Scale(0.5, 0.5, 0.5, 1.0)
+//	sprite.Draw(screen, sprites.DrawAt(100, 100).WithColorM(cm))
+//
+//	// Flash white (add white to all channels)
+//	cm := colorm.ColorM{}
+//	cm.Translate(0.5, 0.5, 0.5, 0.0)
+//	sprite.Draw(screen, sprites.DrawAt(100, 100).WithColorM(cm))
+func (opts DrawOptions) WithColorM(cm colorm.ColorM) DrawOptions {
+	opts.ColorM = cm
+	return opts
+}

@@ -7,6 +7,7 @@ import (
 
 	"github.com/dswisher/gamekit/sprites"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/colorm"
 )
 
 //go:embed assets/*
@@ -62,6 +63,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	// Demonstrate BlendLighter with scaled-up circles
 	g.drawBlendDemo(screen, 100, 250)
+
+	// Demonstrate ColorM (color matrix) transformations
+	g.drawColorMDemo(screen, 100, 380)
 }
 
 // drawBlendDemo demonstrates BlendLighter with overlapping circles.
@@ -96,6 +100,49 @@ func (g *Game) drawBlendDemo(screen *ebiten.Image, baseX, baseY float64) {
 	g.yellowCircle.Draw(screen, sprites.DrawAt(quadX+halfWidth, baseY).WithScale(scale).WithBlend(ebiten.BlendLighter))
 	g.yellowCircle.Draw(screen, sprites.DrawAt(quadX, baseY+halfWidth).WithScale(scale).WithBlend(ebiten.BlendLighter))
 	g.yellowCircle.Draw(screen, sprites.DrawAt(quadX+halfWidth, baseY+halfWidth).WithScale(scale).WithBlend(ebiten.BlendLighter))
+}
+
+// drawColorMDemo demonstrates ColorM (color matrix) transformations.
+// Shows various color effects like tinting, brightness adjustment, and grayscale.
+func (g *Game) drawColorMDemo(screen *ebiten.Image, baseX, baseY float64) {
+	scale := 0.5
+	spacing := 80.0
+
+	// Original (no color transformation)
+	g.runRightGrid.Draw(screen, sprites.DrawAt(baseX, baseY).WithScale(scale))
+
+	// Red tint - scale green and blue to 0, keep red and alpha
+	cm := colorm.ColorM{}
+	cm.Scale(1.0, 0.0, 0.0, 1.0)
+	g.runRightGrid.Draw(screen, sprites.DrawAt(baseX+spacing, baseY).WithScale(scale).WithColorM(cm))
+
+	// Green tint - scale red and blue to 0, keep green and alpha
+	cm = colorm.ColorM{}
+	cm.Scale(0.0, 1.0, 0.0, 1.0)
+	g.runRightGrid.Draw(screen, sprites.DrawAt(baseX+spacing*2, baseY).WithScale(scale).WithColorM(cm))
+
+	// Blue tint - scale red and green to 0, keep blue and alpha
+	cm = colorm.ColorM{}
+	cm.Scale(0.0, 0.0, 1.0, 1.0)
+	g.runRightGrid.Draw(screen, sprites.DrawAt(baseX+spacing*3, baseY).WithScale(scale).WithColorM(cm))
+
+	// 50% darker - scale all RGB channels by 0.5
+	cm = colorm.ColorM{}
+	cm.Scale(0.5, 0.5, 0.5, 1.0)
+	g.runRightGrid.Draw(screen, sprites.DrawAt(baseX+spacing*4, baseY).WithScale(scale).WithColorM(cm))
+
+	// Grayscale - average all channels (using standard weights: 0.299*R + 0.587*G + 0.114*B)
+	// This uses Translate and Scale to create a grayscale matrix
+	cm = colorm.ColorM{}
+	cm.Scale(0.0, 0.0, 0.0, 1.0) // Clear original colors
+	cm.Translate(0.333, 0.333, 0.333, 0.0) // Add equal amounts (simplified grayscale)
+	g.runRightGrid.Draw(screen, sprites.DrawAt(baseX+spacing*5, baseY).WithScale(scale).WithColorM(cm))
+
+	// Flash effect (brighter) - scale up and add white
+	cm = colorm.ColorM{}
+	cm.Scale(1.5, 1.5, 1.5, 1.0)
+	cm.Translate(0.2, 0.2, 0.2, 0.0)
+	g.runRightGrid.Draw(screen, sprites.DrawAt(baseX+spacing*6, baseY).WithScale(scale).WithColorM(cm))
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
