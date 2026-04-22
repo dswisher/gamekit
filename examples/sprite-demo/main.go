@@ -21,6 +21,7 @@ type Game struct {
 	turret       *sprites.Sprite
 	runRightGrid *sprites.Sprite
 	runRightMeta *sprites.Sprite
+	yellowCircle *sprites.Sprite
 	rotation     float64
 }
 
@@ -32,6 +33,11 @@ func NewGame() *Game {
 }
 
 func (g *Game) Update() error {
+	// Exit on ESC key
+	if ebiten.IsKeyPressed(ebiten.KeyEscape) {
+		return ebiten.Termination
+	}
+
 	// Slowly rotate the turret
 	g.rotation += 0.02
 	if g.rotation > 2*math.Pi {
@@ -53,6 +59,43 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	// Draw runRightMeta at (500, 250) scaled to half-size
 	g.runRightMeta.Draw(screen, sprites.DrawAt(500, 250).WithScale(0.5))
+
+	// Demonstrate BlendLighter with scaled-up circles
+	g.drawBlendDemo(screen, 100, 250)
+}
+
+// drawBlendDemo demonstrates BlendLighter with overlapping circles.
+// Shows how overlapping sprites accumulate brightness using additive blending.
+// Each yellow circle has alpha 64, so:
+//   1 circle = 64 alpha (transparent)
+//   2 circles = 128 alpha (semi-transparent)
+//   3 circles = 192 alpha (mostly solid)
+//   4 circles = 255 alpha (solid yellow)
+func (g *Game) drawBlendDemo(screen *ebiten.Image, baseX, baseY float64) {
+	scale := 2.0
+	// With 2x scale, circles are 48x48 pixels.
+	// For ~50% overlap, offset by half the width (~24 pixels).
+	halfWidth := 24.0
+
+	// Single circle (0 overlaps)
+	g.yellowCircle.Draw(screen, sprites.DrawAt(baseX, baseY).WithScale(scale).WithBlend(ebiten.BlendLighter))
+
+	// Two circles (1 overlap at 50%)
+	g.yellowCircle.Draw(screen, sprites.DrawAt(baseX+80, baseY).WithScale(scale).WithBlend(ebiten.BlendLighter))
+	g.yellowCircle.Draw(screen, sprites.DrawAt(baseX+80+halfWidth, baseY).WithScale(scale).WithBlend(ebiten.BlendLighter))
+
+	// Three circles (2 overlaps at 50% each) - arranged in a triangle
+	triX := baseX + 180.0
+	g.yellowCircle.Draw(screen, sprites.DrawAt(triX, baseY).WithScale(scale).WithBlend(ebiten.BlendLighter))
+	g.yellowCircle.Draw(screen, sprites.DrawAt(triX+halfWidth, baseY).WithScale(scale).WithBlend(ebiten.BlendLighter))
+	g.yellowCircle.Draw(screen, sprites.DrawAt(triX+halfWidth/2, baseY+halfWidth).WithScale(scale).WithBlend(ebiten.BlendLighter))
+
+	// Four circles (3 overlaps at 50% each) - arranged in a 2x2 grid pattern
+	quadX := baseX + 280.0
+	g.yellowCircle.Draw(screen, sprites.DrawAt(quadX, baseY).WithScale(scale).WithBlend(ebiten.BlendLighter))
+	g.yellowCircle.Draw(screen, sprites.DrawAt(quadX+halfWidth, baseY).WithScale(scale).WithBlend(ebiten.BlendLighter))
+	g.yellowCircle.Draw(screen, sprites.DrawAt(quadX, baseY+halfWidth).WithScale(scale).WithBlend(ebiten.BlendLighter))
+	g.yellowCircle.Draw(screen, sprites.DrawAt(quadX+halfWidth, baseY+halfWidth).WithScale(scale).WithBlend(ebiten.BlendLighter))
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -68,6 +111,13 @@ func (g *Game) loadAssets() {
 	g.turret = sprites.NewSprite(img)
 	// Set the rotation center to (34, 34) - the center of the turret
 	g.turret.SetOrigin(34, 34)
+
+	// Load a yellow circle (with alpha 64 ~ 25%) for demonstrating blend modes
+	img, err = sprites.LoadImageFromFS(assets, "assets/yellow-circle.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+	g.yellowCircle = sprites.NewSprite(img)
 
 	// Load the sprite sheet image
 	img, err = sprites.LoadImageFromFS(assets, "assets/texture-packer.png")

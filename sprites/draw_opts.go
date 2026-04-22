@@ -106,3 +106,13 @@ func (opts DrawOptions) WithOrigin(originX, originY float64) DrawOptions {
 	opts.OriginY = originY
 	return opts
 }
+
+// WithBlend returns a new DrawOptions with the specified blend mode.
+// Common blend modes include:
+//   - ebiten.BlendSourceOver (default): Normal alpha blending
+//   - ebiten.BlendLighter: Additive blending for glow effects
+//   - ebiten.BlendCopy: Replace destination completely
+func (opts DrawOptions) WithBlend(blend ebiten.Blend) DrawOptions {
+	opts.Blend = blend
+	return opts
+}
