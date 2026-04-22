@@ -1,93 +1,108 @@
 package sprites
 
-// import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"math"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/colorm"
+)
 
 // DrawOptions specifies the parameters for drawing a sprite.
-// It controls the position and will eventually support rotation,
-// scaling, color modulation, and blending modes.
+// It controls the position, rotation, scaling, and origin for transformations.
 //
-// For simple use cases, the DrawOpts function provides a convenient
-// way to create DrawOptions with just X and Y coordinates.
+// For simple use cases, use DrawAt to start building options:
 //
-// Example using DrawOpts shortcut:
+//	// Simple positioning
+//	sprite.Draw(screen, sprites.DrawAt(100, 200))
 //
-//	opts := sprites.DrawOpts(100, 200)
-//	sprite.Draw(screen, opts)
+//	// With rotation and scaling (method chaining)
+//	sprite.Draw(screen, sprites.DrawAt(100, 200).WithRotation(math.Pi/4).WithScale(2.0))
 //
-// Example creating DrawOptions directly:
-//
-//	opts := &sprites.DrawOptions{X: 100, Y: 200}
-//	sprite.Draw(screen, opts)
-//
-// Planned features:
-//   - Rotation (in degrees or radians)
-//   - Scaling (ScaleX, ScaleY)
-//   - Origin point for transformations
-//   - Color modulation using the colorm package
-//   - Custom blend modes
+// The OriginX and OriginY fields control the center of rotation and scaling.
+// If set to math.NaN(), the sprite's default origin will be used.
 type DrawOptions struct {
 	// X is the horizontal screen position where the sprite will be drawn.
 	X float64
 	// Y is the vertical screen position where the sprite will be drawn.
 	Y float64
+	// Rotate is the rotation angle in radians.
+	Rotate float64
+	// ScaleX is the horizontal scale factor (1.0 = original size).
+	ScaleX float64
+	// ScaleY is the vertical scale factor (1.0 = original size).
+	ScaleY float64
+	// OriginX is the X coordinate of the rotation/scaling origin in pixels.
+	// Set to math.NaN() to use the sprite's default origin.
+	OriginX float64
+	// OriginY is the Y coordinate of the rotation/scaling origin in pixels.
+	// Set to math.NaN() to use the sprite's default origin.
+	OriginY float64
 
-	// Rotate           float64
-	// ScaleX, ScaleY   float64
-	// OriginX, OriginY float64
+	// ColorM is the color matrix for color modulation.
+	ColorM colorm.ColorM
 
-	// TODO: deprecated - use colorm package instead
-	// ColorM           ebiten.ColorM
-
-	// TODO: deprecated - use Blend instead
-	// CompositeMode    ebiten.CompositeMode
+	// Blend is the blending mode for drawing.
+	Blend ebiten.Blend
 }
 
-// DrawOpts creates a new DrawOptions with the specified X and Y coordinates.
-// This is a convenience function for the common case where you only need
-// to specify the position without rotation, scaling, or other effects.
-//
-// For more advanced options, create DrawOptions directly:
-//
-//	opts := &sprites.DrawOptions{X: x, Y: y}
-//
-// Parameters:
-//   - x: The horizontal screen position
-//   - y: The vertical screen position
-//   - args: Reserved for future use (rotation, scale, origin)
-//
-// Returns a pointer to a new DrawOptions instance.
+// DrawAt creates a new DrawOptions positioned at (x, y).
+// Use the With* methods to add rotation, scaling, and other transformations.
 //
 // Example:
 //
-//	sprite.Draw(screen, sprites.DrawOpts(100, 100))
-func DrawOpts(x, y float64, args ...float64) *DrawOptions {
-	// r, sx, sy, ox, oy := 0., 1., 1., 0., 0.
-	// switch len(args) {
-	// case 5:
-	// 	oy = args[4]
-	// 	fallthrough
-	// case 4:
-	// 	ox = args[3]
-	// 	fallthrough
-	// case 3:
-	// 	sy = args[2]
-	// 	fallthrough
-	// case 2:
-	// 	sx = args[1]
-	// 	fallthrough
-	// case 1:
-	// 	r = args[0]
-	// }
-
-	return &DrawOptions{
-		X: x,
-		Y: y,
-		// Rotate:        r,
-		// ScaleX:        sx,
-		// ScaleY:        sy,
-		// OriginX:       ox,
-		// OriginY:       oy,
-		// ColorM:        ebiten.ColorM{},
-		// CompositeMode: ebiten.CompositeModeSourceOver,
+//	// Simple positioning
+//	sprite.Draw(screen, sprites.DrawAt(100, 100))
+//
+//	// With rotation
+//	sprite.Draw(screen, sprites.DrawAt(100, 100).WithRotation(math.Pi/4))
+//
+//	// With uniform scaling
+//	sprite.Draw(screen, sprites.DrawAt(100, 100).WithScale(2.0))
+//
+//	// With non-uniform scaling
+//	sprite.Draw(screen, sprites.DrawAt(100, 100).WithScaleXY(2.0, 0.5))
+//
+//	// Chaining multiple transformations
+//	sprite.Draw(screen, sprites.DrawAt(100, 100).WithRotation(math.Pi/4).WithScale(2.0))
+func DrawAt(x, y float64) DrawOptions {
+	return DrawOptions{
+		X:       x,
+		Y:       y,
+		ScaleX:  1,
+		ScaleY:  1,
+		OriginX: math.NaN(),
+		OriginY: math.NaN(),
 	}
+}
+
+// WithRotation returns a new DrawOptions with the specified rotation.
+// The rotation is in radians.
+func (opts DrawOptions) WithRotation(rotate float64) DrawOptions {
+	opts.Rotate = rotate
+	return opts
+}
+
+// WithScale returns a new DrawOptions with uniform scaling.
+// The scale factor applies to both X and Y dimensions.
+func (opts DrawOptions) WithScale(scale float64) DrawOptions {
+	opts.ScaleX = scale
+	opts.ScaleY = scale
+	return opts
+}
+
+// WithScaleXY returns a new DrawOptions with non-uniform scaling.
+// scaleX and scaleY can be specified independently.
+func (opts DrawOptions) WithScaleXY(scaleX, scaleY float64) DrawOptions {
+	opts.ScaleX = scaleX
+	opts.ScaleY = scaleY
+	return opts
+}
+
+// WithOrigin returns a new DrawOptions with the specified origin.
+// The origin is in pixel coordinates relative to the top-left of the sprite.
+// This overrides the sprite's default origin for this draw call.
+func (opts DrawOptions) WithOrigin(originX, originY float64) DrawOptions {
+	opts.OriginX = originX
+	opts.OriginY = originY
+	return opts
 }

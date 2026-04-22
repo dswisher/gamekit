@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"log"
+	"math"
 
 	"github.com/dswisher/gamekit/sprites"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -20,6 +21,7 @@ type Game struct {
 	turret       *sprites.Sprite
 	runRightGrid *sprites.Sprite
 	runRightMeta *sprites.Sprite
+	rotation     float64
 }
 
 func NewGame() *Game {
@@ -30,15 +32,27 @@ func NewGame() *Game {
 }
 
 func (g *Game) Update() error {
+	// Slowly rotate the turret
+	g.rotation += 0.02
+	if g.rotation > 2*math.Pi {
+		g.rotation -= 2 * math.Pi
+	}
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Clear()
 
-	g.turret.Draw(screen, sprites.DrawOpts(100, 50))
-	g.runRightGrid.Draw(screen, sprites.DrawOpts(300, 50))
-	g.runRightMeta.Draw(screen, sprites.DrawOpts(500, 50))
+	// Draw turret with rotation around its center (34, 34)
+	// Uses the sprite's default origin set in loadAssets()
+	g.turret.Draw(screen, sprites.DrawAt(100, 50).WithRotation(g.rotation))
+
+	// Simple positioning with DrawAt
+	g.runRightGrid.Draw(screen, sprites.DrawAt(300, 50))
+	g.runRightMeta.Draw(screen, sprites.DrawAt(500, 50))
+
+	// Draw runRightMeta at (500, 250) scaled to half-size
+	g.runRightMeta.Draw(screen, sprites.DrawAt(500, 250).WithScale(0.5))
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -52,6 +66,8 @@ func (g *Game) loadAssets() {
 		log.Fatal(err)
 	}
 	g.turret = sprites.NewSprite(img)
+	// Set the rotation center to (34, 34) - the center of the turret
+	g.turret.SetOrigin(34, 34)
 
 	// Load the sprite sheet image
 	img, err = sprites.LoadImageFromFS(assets, "assets/texture-packer.png")

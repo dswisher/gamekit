@@ -10,6 +10,6 @@ I am going to try an use colors to differentiate the sub-project to which the ta
 - `red` - bugs, regardless of sub-project
 - `yellow` - sprites and sprite tool
 - `green` - ECS
+- `magenta` - scenes
 - `blue` - TBD
-- `magenta` - TBD
 
