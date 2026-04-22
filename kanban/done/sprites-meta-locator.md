@@ -1,6 +1,7 @@
 ---
 color: yellow
 priority: high
+done: 2026-04-21
 ---
 
 # Implement MetaDataLocator
