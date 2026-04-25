@@ -1,7 +1,9 @@
 package sprites
 
 import (
+	"bytes"
 	"image"
+	"image/png"
 	"io/fs"
 	"os"
 	"testing"
@@ -11,19 +13,63 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// createTestPNG creates a minimal valid PNG image for testing.
+func createTestPNG(t *testing.T) []byte {
+	t.Helper()
+
+	// Create a simple 2x2 RGBA image
+	img := image.NewRGBA(image.Rect(0, 0, 2, 2))
+	img.Set(0, 0, image.White)
+	img.Set(1, 0, image.Black)
+	img.Set(0, 1, image.Black)
+	img.Set(1, 1, image.White)
+
+	// Encode to PNG bytes
+	var buf bytes.Buffer
+	err := png.Encode(&buf, img)
+	require.NoError(t, err, "failed to encode test PNG")
+
+	return buf.Bytes()
+}
+
+func TestLoadImageFromBytes_Success(t *testing.T) {
+	pngData := createTestPNG(t)
+
+	img, err := LoadImageFromBytes(pngData)
+	require.NoError(t, err)
+	require.NotNil(t, img)
+	assert.Equal(t, 2, img.Bounds().Dx())
+	assert.Equal(t, 2, img.Bounds().Dy())
+}
+
+func TestLoadImageFromBytes_InvalidData(t *testing.T) {
+	img, err := LoadImageFromBytes([]byte("not valid image data"))
+	assert.Error(t, err)
+	assert.Nil(t, img)
+	assert.Contains(t, err.Error(), "failed to decode image")
+}
+
+func TestLoadImageFromBytes_EmptyData(t *testing.T) {
+	img, err := LoadImageFromBytes([]byte{})
+	assert.Error(t, err)
+	assert.Nil(t, img)
+	assert.Contains(t, err.Error(), "failed to decode image")
+}
+
 func TestLoadImageFromFS_Success(t *testing.T) {
-	// Use real filesystem with testdata
-	img, err := LoadImageFromFS(os.DirFS("testdata"), "texture-packer.png")
-	// Note: This test requires a PNG file in testdata
-	// If the file doesn't exist, this will error which is expected behavior
-	if err != nil {
-		// The image file might not exist, that's ok - just verify error is descriptive
-		assert.Contains(t, err.Error(), "failed to read image")
-	} else {
-		require.NotNil(t, img)
-		assert.Greater(t, img.Bounds().Dx(), 0)
-		assert.Greater(t, img.Bounds().Dy(), 0)
+	// Create a MapFS with a valid PNG file
+	pngData := createTestPNG(t)
+	mapFS := fstest.MapFS{
+		"test.png": &fstest.MapFile{
+			Data: pngData,
+		},
 	}
+
+	img, err := LoadImageFromFS(mapFS, "test.png")
+	require.NoError(t, err)
+	require.NotNil(t, img)
+	assert.Equal(t, 2, img.Bounds().Dx())
+	assert.Equal(t, 2, img.Bounds().Dy())
 }
 
 func TestLoadImageFromFS_MissingFile(t *testing.T) {

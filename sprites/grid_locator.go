@@ -113,3 +113,20 @@ func (gl *GridLocator) GetRect(col, row int) image.Rectangle {
 
 	return image.Rect(x0, y0, x0+gl.spriteWidth, y0+gl.spriteHeight)
 }
+
+// GetRowRects returns an array of rectangles by repeatedly calling GetRect
+// with advancing column values. This is useful for extracting a row of sprites
+// from a sprite sheet.
+//
+// For example, GetRowRects(2, 3, 4) would call GetRect(2, 3), GetRect(3, 3),
+// GetRect(4, 3), and GetRect(5, 3), returning all results as an array.
+//
+// The row parameter remains constant, while the col parameter advances from
+// the starting col value through col+num-1.
+func (gl *GridLocator) GetRowRects(col, row, num int) []image.Rectangle {
+	rects := make([]image.Rectangle, num)
+	for i := range num {
+		rects[i] = gl.GetRect(col+i, row)
+	}
+	return rects
+}

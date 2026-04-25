@@ -8,6 +8,7 @@ import (
 	"github.com/dswisher/gamekit/sprites"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/colorm"
+	"github.com/hajimehoshi/ebiten/v2/examples/resources/images"
 )
 
 //go:embed assets/*
@@ -19,11 +20,12 @@ const (
 )
 
 type Game struct {
-	turret       *sprites.Sprite
-	runRightGrid *sprites.Sprite
-	runRightMeta *sprites.Sprite
-	yellowCircle *sprites.Sprite
-	rotation     float64
+	turret        *sprites.Sprite
+	runRightGrid  *sprites.Sprite
+	runRightMeta  *sprites.Sprite
+	yellowCircle  *sprites.Sprite
+	rotation      float64
+	gridAnimation *sprites.Animation
 }
 
 func NewGame() *Game {
@@ -44,6 +46,10 @@ func (g *Game) Update() error {
 	if g.rotation > 2*math.Pi {
 		g.rotation -= 2 * math.Pi
 	}
+
+	// Update the animation
+	g.gridAnimation.Update()
+
 	return nil
 }
 
@@ -55,26 +61,30 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.turret.Draw(screen, sprites.DrawAt(100, 50).WithRotation(g.rotation))
 
 	// Simple positioning with DrawAt
-	g.runRightGrid.Draw(screen, sprites.DrawAt(300, 50))
-	g.runRightMeta.Draw(screen, sprites.DrawAt(500, 50))
+	g.runRightGrid.Draw(screen, sprites.DrawAt(300, 20))
+	g.runRightMeta.Draw(screen, sprites.DrawAt(450, 20))
 
-	// Draw runRightMeta at (500, 250) scaled to half-size
-	g.runRightMeta.Draw(screen, sprites.DrawAt(500, 250).WithScale(0.5))
+	// Draw runRightMeta scaled to half-size
+	g.runRightMeta.Draw(screen, sprites.DrawAt(600, 50).WithScale(0.5))
 
 	// Demonstrate BlendLighter with scaled-up circles
-	g.drawBlendDemo(screen, 100, 250)
+	g.drawBlendDemo(screen, 50, 200)
 
 	// Demonstrate ColorM (color matrix) transformations
-	g.drawColorMDemo(screen, 100, 380)
+	g.drawColorMDemo(screen, 50, 300)
+
+	// Draw the animation
+	g.gridAnimation.Draw(screen, sprites.DrawAt(50, 300).WithScale(2.0))
 }
 
 // drawBlendDemo demonstrates BlendLighter with overlapping circles.
 // Shows how overlapping sprites accumulate brightness using additive blending.
 // Each yellow circle has alpha 64, so:
-//   1 circle = 64 alpha (transparent)
-//   2 circles = 128 alpha (semi-transparent)
-//   3 circles = 192 alpha (mostly solid)
-//   4 circles = 255 alpha (solid yellow)
+//
+//	1 circle = 64 alpha (transparent)
+//	2 circles = 128 alpha (semi-transparent)
+//	3 circles = 192 alpha (mostly solid)
+//	4 circles = 255 alpha (solid yellow)
 func (g *Game) drawBlendDemo(screen *ebiten.Image, baseX, baseY float64) {
 	scale := 2.0
 	// With 2x scale, circles are 48x48 pixels.
@@ -134,7 +144,7 @@ func (g *Game) drawColorMDemo(screen *ebiten.Image, baseX, baseY float64) {
 	// Grayscale - average all channels (using standard weights: 0.299*R + 0.587*G + 0.114*B)
 	// This uses Translate and Scale to create a grayscale matrix
 	cm = colorm.ColorM{}
-	cm.Scale(0.0, 0.0, 0.0, 1.0) // Clear original colors
+	cm.Scale(0.0, 0.0, 0.0, 1.0)           // Clear original colors
 	cm.Translate(0.333, 0.333, 0.333, 0.0) // Add equal amounts (simplified grayscale)
 	g.runRightGrid.Draw(screen, sprites.DrawAt(baseX+spacing*5, baseY).WithScale(scale).WithColorM(cm))
 
@@ -185,6 +195,17 @@ func (g *Game) loadAssets() {
 	}
 
 	g.runRightMeta = sheet.Sprite(meta.GetRect("RunRight01.png"))
+
+	// Use a grid locator to set up an animation using the ebiten "runner" example
+	img, err = sprites.LoadImageFromBytes(images.Runner_png)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// TODO: should we have a "sprites.NoBorder" or some such??
+	grid = sprites.NewGridLocator(32, 32, sprites.WithBorder(0))
+
+	g.gridAnimation = sprites.NewAnimation(img, grid.GetRowRects(0, 1, 8))
 }
 
 func main() {

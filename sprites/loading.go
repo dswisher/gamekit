@@ -12,6 +12,42 @@ import (
 	_ "image/png"
 )
 
+// LoadImageFromBytes decodes image data from a byte slice and returns it as
+// an ebiten.Image ready for use with the sprites package.
+//
+// This function is useful when you have image data already loaded in memory,
+// such as from an embedded file, a network request, or any other source that
+// provides raw image bytes.
+//
+// Supported image formats are determined by the registered image decoders.
+// By default, PNG is supported. Import other image format packages to add
+// support for JPEG, GIF, etc.
+//
+// Parameters:
+//   - data: The raw image data as a byte slice
+//
+// Returns:
+//   - *ebiten.Image: The loaded image wrapped as an ebiten.Image
+//   - error: An error if the data cannot be decoded as an image
+//
+// Example using embedded assets:
+//
+//	//go:embed assets/player.png
+//	var playerPNG []byte
+//	img, err := sprites.LoadImageFromBytes(playerPNG)
+//	if err != nil {
+//	    log.Fatal(err)
+//	}
+//	sprite := sprites.NewSprite(img)
+func LoadImageFromBytes(data []byte) (*ebiten.Image, error) {
+	img, _, err := image.Decode(bytes.NewReader(data))
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode image: %w", err)
+	}
+
+	return ebiten.NewImageFromImage(img), nil
+}
+
 // LoadImageFromFS loads an image from any fs.FS implementation and returns
 // it as an ebiten.Image ready for use with the sprites package.
 //
@@ -53,12 +89,12 @@ func LoadImageFromFS(fsys fs.FS, path string) (*ebiten.Image, error) {
 		return nil, fmt.Errorf("failed to read image %s: %w", path, err)
 	}
 
-	img, _, err := image.Decode(bytes.NewReader(b))
+	img, err := LoadImageFromBytes(b)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode image %s: %w", path, err)
 	}
 
-	return ebiten.NewImageFromImage(img), nil
+	return img, nil
 }
 
 // LoadMetadataFromFS loads sprite sheet metadata from a JSON file.

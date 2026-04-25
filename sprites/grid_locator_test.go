@@ -284,3 +284,39 @@ func TestGridLocator_ZeroSizeSprites(t *testing.T) {
 		gl.GetRect(0, 0)
 	}, "zero-sized sprites cause division by zero in bounds check")
 }
+
+func TestGridLocator_GetRowRects(t *testing.T) {
+	gl := NewGridLocator(32, 48, WithBorder(2))
+
+	// Get 4 rectangles starting at col=2, row=3
+	rects := gl.GetRowRects(2, 3, 4)
+
+	// Should return exactly 4 rectangles
+	require.Len(t, rects, 4, "should return 4 rectangles")
+
+	// Verify each rectangle matches what GetRect would return
+	// Sprite size 32x48 with 2px border
+	// For row 3: y0 = 3*48 + 3*2 = 144 + 6 = 150
+	expectedRects := []image.Rectangle{
+		// col 2: x0 = 2*32 + 2*2 = 64 + 4 = 68
+		image.Rect(68, 150, 100, 198),
+		// col 3: x0 = 3*32 + 3*2 = 96 + 6 = 102
+		image.Rect(102, 150, 134, 198),
+		// col 4: x0 = 4*32 + 4*2 = 128 + 8 = 136
+		image.Rect(136, 150, 168, 198),
+		// col 5: x0 = 5*32 + 5*2 = 160 + 10 = 170
+		image.Rect(170, 150, 202, 198),
+	}
+
+	for i, expected := range expectedRects {
+		assert.Equal(t, expected, rects[i], "rectangle at index %d should match", i)
+	}
+}
+
+func TestGridLocator_GetRowRects_ZeroCount(t *testing.T) {
+	gl := NewGridLocator(32, 32)
+
+	// Getting 0 rectangles should return empty slice
+	rects := gl.GetRowRects(0, 0, 0)
+	assert.Empty(t, rects, "should return empty slice when num is 0")
+}
