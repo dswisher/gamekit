@@ -74,7 +74,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.drawColorMDemo(screen, 50, 300)
 
 	// Draw the animation
-	g.gridAnimation.Draw(screen, sprites.DrawAt(30, 400).WithScale(3.0))
+	g.gridAnimation.Draw(screen, sprites.DrawAt(30, 400).WithScale(3.0).WithRotation(g.rotation))
 }
 
 // drawBlendDemo demonstrates BlendLighter with overlapping circles.
@@ -206,6 +206,7 @@ func (g *Game) loadAssets() {
 	grid = sprites.NewGridLocator(32, 32, sprites.WithBorder(0))
 
 	g.gridAnimation = sprites.NewAnimation(img, grid.GetRowRects(0, 1, 8))
+	g.gridAnimation.SetOrigin(16, 16)
 }
 
 func main() {

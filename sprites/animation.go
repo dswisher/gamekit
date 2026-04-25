@@ -74,6 +74,19 @@ func (anim *Animation) Update() {
 //
 //	// With scaling
 //	anim.Draw(screen, sprites.DrawAt(100, 100).WithScale(2.0))
+// SetOrigin sets the default origin for rotation and scaling transformations.
+// The origin is specified in pixel coordinates relative to the top-left corner
+// of the animation frame. This value will be used when DrawOptions.OriginX/OriginY are NaN.
+//
+// Example:
+//
+//	// Set rotation center to the center of a 32x32 animation frame
+//	anim.SetOrigin(16, 16)
+func (anim *Animation) SetOrigin(x, y float64) {
+	anim.originX = x
+	anim.originY = y
+}
+
 // Origin returns the current origin values for this animation.
 func (anim *Animation) Origin() (x, y float64) {
 	return anim.originX, anim.originY

@@ -43,8 +43,8 @@ func drawImage(drawable Drawable, screen, img *ebiten.Image, opts DrawOptions) {
 		eopts.GeoM.Rotate(opts.Rotate)
 	}
 
-	// Translate to the final position, accounting for the origin offset
-	eopts.GeoM.Translate(opts.X+ox, opts.Y+oy)
+	// Translate to the final position, accounting for the scaled origin offset
+	eopts.GeoM.Translate(opts.X+ox*opts.ScaleX, opts.Y+oy*opts.ScaleY)
 
 	// Apply blend mode
 	eopts.Blend = opts.Blend
