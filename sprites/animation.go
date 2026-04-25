@@ -10,10 +10,11 @@ import (
 // Animation represents a sequence of frames that can be played back at a specified FPS.
 // The animation loops continuously and advances frames automatically when Update() is called.
 type Animation struct {
-	Frames       []*ebiten.Image // Animation frames
-	FPS          float64         // Animation playback speed (Frames Per Second)
-	currentIndex int             // Current frame index
-	tick         float64         // Accumulated time tick for frame advancement
+	Frames             []*ebiten.Image // Animation frames
+	FPS                float64         // Animation playback speed (Frames Per Second)
+	originX, originY   float64         // Default origin for rotation and scaling
+	currentIndex       int             // Current frame index
+	tick               float64         // Accumulated time tick for frame advancement
 }
 
 // NewAnimation creates a new Animation from the specified image and frame rectangles.
@@ -34,6 +35,8 @@ func NewAnimation(img *ebiten.Image, rects []image.Rectangle) *Animation {
 	return &Animation{
 		Frames:       frames,
 		FPS:          12, // Hardcoded default FPS
+		originX:      0,
+		originY:      0,
 		currentIndex: 0,
 		tick:         0,
 	}
@@ -71,9 +74,24 @@ func (anim *Animation) Update() {
 //
 //	// With scaling
 //	anim.Draw(screen, sprites.DrawAt(100, 100).WithScale(2.0))
+// Origin returns the current origin values for this animation.
+func (anim *Animation) Origin() (x, y float64) {
+	return anim.originX, anim.originY
+}
+
+// Draw renders the current animation frame to the provided screen image.
+// The opts parameter controls position, rotation, scaling, and other transformations.
+//
+// Example:
+//
+//	// Simple positioning
+//	anim.Draw(screen, sprites.DrawAt(100, 100))
+//
+//	// With scaling
+//	anim.Draw(screen, sprites.DrawAt(100, 100).WithScale(2.0))
 func (anim *Animation) Draw(screen *ebiten.Image, opts DrawOptions) {
 	if len(anim.Frames) == 0 {
 		return
 	}
-	drawImage(screen, anim.Frames[anim.currentIndex], opts, 0, 0)
+	drawImage(anim, screen, anim.Frames[anim.currentIndex], opts)
 }
