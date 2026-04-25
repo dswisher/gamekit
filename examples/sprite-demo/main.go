@@ -74,7 +74,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.drawColorMDemo(screen, 50, 300)
 
 	// Draw the animation
-	g.gridAnimation.Draw(screen, sprites.DrawAt(50, 300).WithScale(2.0))
+	g.gridAnimation.Draw(screen, sprites.DrawAt(30, 400).WithScale(3.0))
 }
 
 // drawBlendDemo demonstrates BlendLighter with overlapping circles.

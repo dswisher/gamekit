@@ -65,15 +65,21 @@ func (spr *Sprite) Origin() (x, y float64) {
 //	// With rotation and scaling using method chaining
 //	sprite.Draw(screen, sprites.DrawAt(100, 100).WithRotation(math.Pi/4).WithScale(2.0))
 func (spr *Sprite) Draw(screen *ebiten.Image, opts DrawOptions) {
+	drawImage(screen, spr.image, opts, spr.originX, spr.originY)
+}
+
+// drawImage draws an image to the screen using the specified options.
+// originX and originY are default origin values that can be overridden by opts.
+func drawImage(screen, img *ebiten.Image, opts DrawOptions, originX, originY float64) {
 	eopts := &colorm.DrawImageOptions{}
 
-	// Determine effective origin (use DrawOptions if specified, otherwise use sprite default)
+	// Determine effective origin (use DrawOptions if specified, otherwise use defaults)
 	ox, oy := opts.OriginX, opts.OriginY
 	if math.IsNaN(ox) {
-		ox = spr.originX
+		ox = originX
 	}
 	if math.IsNaN(oy) {
-		oy = spr.originY
+		oy = originY
 	}
 
 	// Apply transformations in order: translate to origin -> scale/rotate -> translate to position
@@ -96,5 +102,5 @@ func (spr *Sprite) Draw(screen *ebiten.Image, opts DrawOptions) {
 	// Apply blend mode
 	eopts.Blend = opts.Blend
 
-	colorm.DrawImage(screen, spr.image, opts.ColorM, eopts)
+	colorm.DrawImage(screen, img, opts.ColorM, eopts)
 }
