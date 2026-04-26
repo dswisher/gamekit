@@ -38,6 +38,7 @@ MIT
 - [fzipp/texturepacker](https://github.com/fzipp/texturepacker) - Read sprite sheets created and exported as JSON by TexturePacker.
 - [setanarut/anim](https://github.com/setanarut/anim) - Animation player for Ebitengine v2
 - [Kangaroux/go-spritesheet](https://github.com/Kangaroux/go-spritesheet) - Use YAML to make working with sprite sheets easy. Compatible with ebiten
+- [solarlune/goaseprite](https://github.com/solarlune/goaseprite) - Aseprite JSON loader for Go
 
 ## Editors
 
