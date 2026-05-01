@@ -4,7 +4,7 @@ MODULES := $(shell go work edit -json | jq -r '.Use[].DiskPath')
 
 # Hard-coded list of PUBLIC packages that need documentation
 # Add new public packages here as they are created
-PUBLIC_MODULES := ./scenes ./sprites
+PUBLIC_MODULES := ./ecs ./scenes ./sprites
 
 # Default port for documentation server
 DOC_PORT ?= 8080

@@ -2,6 +2,8 @@ go 1.26
 
 use (
 	./cmd/spritetool
+	./ecs
+	./examples/ecs-demo
 	./examples/scene-demo
 	./examples/sprite-demo
 	./scenes
