@@ -1,6 +1,9 @@
 package ecs
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
 // Registry manages entities and provides access to typed component
 // stores. It is the central data structure of the ECS.
@@ -117,4 +120,24 @@ func FirstEntityInList[T any](r *Registry, ids []EntityID) (EntityID, T, bool) {
 		}
 	}
 	return 0, zero, false
+}
+
+// componentStore is the non-generic interface that all component stores implement.
+// This allows iteration over all stores without knowing the concrete type.
+type componentStore interface {
+	Has(id EntityID) bool
+}
+
+// GetComponentTypesForEntity returns all component type names for a given entity.
+// Only returns types for which the entity actually has a component.
+// The returned slice is sorted alphabetically.
+func (r *Registry) GetComponentTypesForEntity(id EntityID) []string {
+	var types []string
+	for typeName, store := range r.stores {
+		if s, ok := store.(componentStore); ok && s.Has(id) {
+			types = append(types, typeName)
+		}
+	}
+	sort.Strings(types)
+	return types
 }
